@@ -14,9 +14,11 @@ Random Tool with many functions coming
 - proxy scraper
 - probably some code fixing cause it doesnt work compiled
 
-## installing
+## installing and use
 ```python
 pip install -r requirements.txt
 python crowntool.py
 or just open the .py file
 ```
+
+if you have anything else i could add just tell me :)
