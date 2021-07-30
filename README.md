@@ -13,7 +13,6 @@ Random Tool with many functions coming
 - add help info to code
 - send message to all dms and chats of token
 - proxy scraper
-- probably some code fixing cause it doesnt work compiled
 
 ## installing and use
 ```python
