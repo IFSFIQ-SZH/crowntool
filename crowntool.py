@@ -148,7 +148,8 @@ def exit():
  os.system('cls' if os.name == 'nt' else 'clear')
  os.system('exit')
 
-main()
+if __name__ == '__main__':
+ main()
 
 
 
