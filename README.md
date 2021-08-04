@@ -9,7 +9,6 @@ Random Tool with many functions coming
 
 ## Todo
 
-- Token Disabler
 - add help info to code
 - send message to all dms and chats of token
 - proxy scraper
