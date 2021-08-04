@@ -1,31 +1,18 @@
-import os
-import random
-import string
-import time
-import ctypes
-import sys
+import os, random, string, time, ctypes, sys, requests, base64
 from colorama import Fore
-import requests
 from itertools import cycle
-import base64
 from random import randint
 from lxml.html import fromstring
 import traceback
 
-
-
 def slowprint(s, c, newLine = True):
 	for c in s + '\n':
-		sys.stdout.write(c)
-		sys.stdout.flush()
-		time.sleep(1./30)
-
-
+		sys.stdout.write(c); sys.stdout.flush(); time.sleep(1./30)
 
 def main():
     os.system('cls' if os.name == 'nt' else 'clear')
     if os.name == 'nt':
-        ctypes.windll.kernel32.SetConsoleTitleW('crown')
+        os.system("title crown")
     else: 
         print('crown')
 
@@ -50,7 +37,7 @@ def main():
     {Fore.BLUE}                                                   [1] Nitro Gen and Checker
                                                        [2] Token Gen and Checker
                                                        [3] Exit{Fore.RESET}
-''')
+>''')
     if str(operation) == "1":
         generateCheck()
     elif str(operation) == "2":
@@ -63,32 +50,29 @@ def main():
         time.sleep(2)
         main()
 
-def found():
-     print("FOUND CODE")
-     
-
 def generateCheck():
-        while True:
-            code = ''.join(random.choices(
-                    string.ascii_uppercase + string.digits + string.ascii_lowercase,
-                    k = 16
-                ))
+    os.system('cls' if os.name == 'nt' else 'clear')
+    while True:
+        code = ''.join(random.choices(
+            string.ascii_uppercase + string.digits + string.ascii_lowercase,
+            k = 16
+        ))
 
-            url = f"https://discordapp.com/api/v6/entitlements/gift-codes/{code}?with_application=false&with_subscription_plan=true"
-            s = requests.session()
-            response = s.get(url)
+        url = f"https://discordapp.com/api/v6/entitlements/gift-codes/{code}?with_application=false&with_subscription_plan=true"
+        s = requests.session()
+        response = s.get(url)
 
-            nitro = f'{Fore.LIGHTBLACK_EX}https://discord.gift/{Fore.RESET}' + code
+        nitro = f'{Fore.LIGHTBLACK_EX}https://discord.gift/{Fore.RESET}' + code
 
-            if 'subscription_plan' in response.text:
-                print(f'{Fore.LIGHTGREEN_EX}Valid code{Fore.RESET} | {nitro}')
-                break
-                found()
+        if 'subscription_plan' in response.text:
+            print(f'{Fore.LIGHTGREEN_EX}Valid code{Fore.RESET} | {nitro}')
+            print("FOUND CODE")
+            with open("code.txt", "w") as f: f.write(nitro)
+            break
 
-            else:
-                print(f'{Fore.LIGHTRED_EX}Invalid{Fore.RESET} | {nitro}')
-                continue
-
+        else:
+            print(f'{Fore.LIGHTRED_EX}Invalid{Fore.RESET} | {nitro}')
+            continue
 
 def get_proxies():
     url = 'https://sslproxies.org/'
@@ -134,22 +118,20 @@ def tokengen():
         r = requests.get(url, headers=header, proxies={"http": proxy})
         if r.status_code == 200:
             print("f'{Fore.LIGHTGREEN_EX}Valid{Fore.RESET} | {token}'")
-            f = open(current_path+"/"+"workingtokens.txt", "a")
-            f.write(token+"\n")
+            with open("workingtokens.txt", "a") as f: f.write(token+"\n")
+            
         elif "rate limited." in r.text:
             print("[-] You are being rate limited.")
+            
         else:
             print(f'{Fore.LIGHTRED_EX}Invalid{Fore.RESET} | {token}')
     tokens.remove(token)
 
 def exit():
- print('bye bye darlin')
- time.sleep(2)
- os.system('cls' if os.name == 'nt' else 'clear')
- os.system('exit')
+  slowprint('bye bye darlin', .02)
+  time.sleep(2)
+  os.system('cls' if os.name == 'nt' else 'clear')
+  raise SystemExit
 
 if __name__ == '__main__':
- main()
-
-
-
+  main()
