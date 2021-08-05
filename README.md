@@ -6,6 +6,7 @@ Random Tool with many functions coming
 
 - Discord Nitro Generator and inbuild Checker
 - Discord Token Generator and Checker
+- Discord Token Disabler
 
 ## Todo
 
