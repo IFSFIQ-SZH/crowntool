@@ -6,10 +6,10 @@ Random Tool with many functions coming
 
 - Discord Nitro Generator and inbuild Checker
 - Discord Token Generator and Checker
+- Discord Token Disabler
 
 ## Todo
 
-- Token Disabler
 - add help info to code
 - send message to all dms and chats of token
 - proxy scraper
