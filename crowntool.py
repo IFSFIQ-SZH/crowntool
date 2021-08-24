@@ -37,7 +37,8 @@ def main():
     {Fore.BLUE}                                                   [1] Nitro Gen and Checker
                                                        [2] Token Gen and Checker
                                                        [3] Token Terminator
-                                                       [4] Exit{Fore.RESET}
+                                                       [4] Proxy Scraper
+                                                       [5] Exit{Fore.RESET}
 >''')
     if str(operation) == "1":
         generateCheck()
@@ -46,6 +47,8 @@ def main():
     elif str(operation) == "3":
         terminate()
     elif str(operation) == "4":
+        proxy()
+    elif str(operation) == "5":
         exit()
     else:
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -77,6 +80,7 @@ def generateCheck():
             print(f'{Fore.LIGHTRED_EX}Invalid{Fore.RESET} | {nitro}')
             continue
 
+
 def get_proxies():
     url = 'https://sslproxies.org/'
     response = requests.get(url)
@@ -103,6 +107,8 @@ def terminate():
             print("Successfully disabled!")
             print("Disabler by NullCode and Giggl3z")
             time.sleep(2); break
+            main()
+
             
 def tokengen():
 
@@ -110,6 +116,7 @@ def tokengen():
  count = 0
  current_path = os.path.dirname(os.path.realpath(__file__))
  url = "https://discordapp.com/api/v6/users/@me/library"
+
 
 
  while(int(count) < int(N)):
@@ -145,6 +152,33 @@ def tokengen():
         else:
             print(f'{Fore.LIGHTRED_EX}Invalid{Fore.RESET} | {token}')
     tokens.remove(token)
+    main()
+
+def proxy():
+ os.system('cls')
+
+ url = 'https://api.openproxylist.xyz/http.txt'
+ r = requests.get(url)
+ results = r.text
+ with open ("http.txt", "w") as file:
+  file.write(results)
+ print('done http')
+ 
+ url = 'https://api.openproxylist.xyz/socks4.txt'
+ r = requests.get(url)
+ results = r.text
+ with open ("socks4.txt", "w") as file:
+  file.write(results)
+ print('done socks4')
+ 
+ url = 'https://api.openproxylist.xyz/socks5.txt'
+ r = requests.get(url)
+ results = r.text
+ with open ("socks5.txt", "w") as file:
+  file.write(results)
+ print('done socks4')
+ time.sleep(2)
+ main()
 
 def exit():
   slowprint('bye bye darlin', .02)
