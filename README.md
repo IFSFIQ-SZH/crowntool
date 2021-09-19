@@ -1,7 +1,7 @@
 # crowntool
 Random Tool with many functions coming
 
-![Untitled](https://user-images.githubusercontent.com/58895443/126803591-306c8014-e7d9-4df3-8c82-93bd6b947621.png)
+![Untitled](https://i.ibb.co/v3gzZ8F/Untitled.png)
 ## functions
 
 - Discord Nitro Generator and inbuild Checker
