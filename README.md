@@ -10,10 +10,6 @@ Multi Tool with many functions coming
 - Proxy Scraper
 - Pinger
 
-## Todo
-
-- add help info to code
-
 ## installing and use
 ```python
 pip install -r requirements.txt
