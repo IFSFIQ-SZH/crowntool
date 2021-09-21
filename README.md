@@ -1,5 +1,5 @@
 # crowntool
-Random Tool with many functions coming
+Multi Tool with many functions coming
 
 ![Untitled](https://i.ibb.co/v3gzZ8F/Untitled.png)
 ## functions
@@ -12,7 +12,6 @@ Random Tool with many functions coming
 ## Todo
 
 - add help info to code
-- send message to all dms and chats of token
 
 ## installing and use
 ```python
