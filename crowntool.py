@@ -186,11 +186,11 @@ def tokengen():
 
             elif "rate limited." in r.text:
                 print("[-] You are being rate limited.")
+                main()
 
             else:
                 print(f'{Fore.LIGHTRED_EX}Invalid{Fore.RESET} | {token}')
         tokens.remove(token)
-        main()
 
 
 def proxy():
