@@ -8,6 +8,7 @@ Multi Tool with many functions coming
 - Discord Token Generator and Checker
 - Discord Token Disabler
 - Proxy Scraper
+- Proxy Checker
 - Pinger
 
 ## installing and use
