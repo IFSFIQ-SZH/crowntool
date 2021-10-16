@@ -8,10 +8,12 @@ import requests
 import base64
 import json
 from colorama import Fore
+from colorama import Style
 from itertools import cycle
 from random import randint
 from lxml.html import fromstring
 import traceback
+import threading
 
 
 def slowprint(s, c, newLine=True):
@@ -51,8 +53,9 @@ def main():
                                                        [2] Token Gen and Checker
                                                        [3] Token Terminator
                                                        [4] Proxy Scraper
-                                                       [5] Pinger
-                                                       [6] Exit{Fore.RESET}
+                                                       [5] Proxy Checker
+                                                       [6] Pinger
+                                                       [7] Exit{Fore.RESET}
 >''')
     if str(operation) == "1":
         generateCheck()
@@ -63,8 +66,10 @@ def main():
     elif str(operation) == "4":
         proxy()
     elif str(operation) == "5":
-        pinger()
+        proxychecker()
     elif str(operation) == "6":
+        pinger()
+    elif str(operation) == "7":
         exit()
     else:
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -220,8 +225,34 @@ def proxy():
     main()
 
 
-def pinger():
+def proxychecker():
 
+
+    r = requests.Session()
+
+    def check(prox):
+	    link = 'http://google.com/'
+	    r.proxies = {
+	    'http':'http://{}'.format(prox),
+	    'https':'http://{}'.format(prox)
+	    }
+	    try:
+		    req = r.get(link,timeout=2)
+		    if req.status_code == 200:
+			    print(Fore.LIGHTGREEN_EX+" Good [{}]".format(prox))
+			    with open('good.txt','a') as wr: #w writes to good.txt in folder
+				    wr.write(prox+'\n')
+		    else:
+				    print(Fore.YELLOW +" Blocked [{}]".format(prox))
+	    except:
+		    print(Fore.LIGHTRED_EX+" Bad [{}]".format(prox))
+    proxies=open('proxies.txt', 'r').read().splitlines() # reads from proxies.txt in folder
+    from multiprocessing.dummy import Pool as ThreadPool
+    pool = ThreadPool(13)
+    results = pool.map(check, proxies)
+main()
+
+def pinger():
 
     os.system("mode con:cols=61 lines=30")
     os.system("@title 666 Pinger & cls")
