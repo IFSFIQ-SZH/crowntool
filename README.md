@@ -1,5 +1,5 @@
 # crowntool
-Multi Tool with many functions coming
+Multi Tool (for now no more updates)
 
 ![Capture](https://user-images.githubusercontent.com/58895443/137584868-dc91342b-713a-4fe9-be1f-9d13c23bfe43.PNG)
 ## functions
