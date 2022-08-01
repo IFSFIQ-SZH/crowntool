@@ -13,6 +13,8 @@ Multi Tool
 ```python
 pip install -r requirements.txt
 python crowntool.py
+
+or better use the pre compiled exe >> releases
 ```
 
 # INFO
