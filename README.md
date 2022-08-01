@@ -1,21 +1,18 @@
 # crowntool
-Multi Tool (for now no more updates)
+Multi Tool
 
-![Capture](https://user-images.githubusercontent.com/58895443/137584868-dc91342b-713a-4fe9-be1f-9d13c23bfe43.PNG)
+![Capture](https://raw.githubusercontent.com/bntr00t/crowntool/main/image.png)
 ## functions
 
-- Discord Nitro Generator and inbuild Checker
+- Discord Nitro Generator and Checker
 - Discord Token Generator and Checker
-- Discord Token Disabler
 - Proxy Scraper
 - Proxy Checker
-- Pinger
 
 ## installing and use
 ```python
 pip install -r requirements.txt
 python crowntool.py
-or just open the .py file
 ```
 
 # INFO
