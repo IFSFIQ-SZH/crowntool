@@ -1,4 +1,5 @@
 colorama
-requests
+httpx
+h2
 lxml
 pybase64
