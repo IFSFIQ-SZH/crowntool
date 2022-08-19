@@ -4,6 +4,7 @@ from colorama import Style
 from random import randint
 from lxml.html import fromstring
 from threading import Thread
+from httpx_socks import SyncProxyTransport
 
 
 def slowprint(s, c, newLine=True):
@@ -42,7 +43,7 @@ def main():
     {Fore.BLUE}                                                   [1] Nitro Gen and Checker
                                                        [2] Token Gen and Checker
                                                        [3] Proxy Scraper
-                                                       [4] HTTP/SOCKS5 Proxy Checker
+                                                       [4] HTTP/SOCKS4/SOCKS5 Proxy Checker
                                                        [5] Exit{Fore.RESET}
 >''')
     if str(operation) == "1":
@@ -200,18 +201,20 @@ def proxychecker():
     os.system('cls' if os.name == 'nt' else 'clear')
     def check(PROXY,url,prxtype):
         if prxtype == 'HTTP':
-            proxtype = 'http://'
+            HxClient = httpx.Client(http2=True,headers = {'user-agent':'Mozilla/5.0 ProxyCheck[CrownHTTP]','accept-language': 'en'},follow_redirects=True,proxies='http://'+PROXY)
         elif prxtype == 'SOCKS5':
-            proxtype = 'socks5://'
+            HxClient = httpx.Client(http2=True,headers = {'user-agent':'Mozilla/5.0 ProxyCheck[CrownSOCKS5]','accept-language': 'en'},follow_redirects=True,proxies='socks5://'+PROXY)
+        elif prxtype == 'SOCKS4':
+        	HxClient = httpx.Client(http2=True,headers = {'user-agent':'Mozilla/5.0 ProxyCheck[CrownSOCKS4]','accept-language': 'en'},follow_redirects=True,transport=SyncProxyTransport.from_url('socks4://'+PROXY))
 
-        with httpx.Client(http2=True,headers = {'user-agent':'ProxyCheck[Crown]'},follow_redirects=True,proxies=proxtype + PROXY) as client:
+        with HxClient as client:
             try:
                     req = client.get(url)
-                    if req.status_code <= 300 and 'Google' in str(req.content):
+                    if req.status_code == 200 and "GET" in req.text:
                         print (Fore.GREEN + '[Valid] ' + PROXY + ' ' + str(req.status_code))
                         with open(f'{prxtype}_good.txt', 'a') as xX:
                             xX.write(PROXY + '\n')
-                    elif req.status_code >= 300:
+                    elif req.status_code != 200 or not "GET" in req.text:
                         print (Fore.YELLOW + '[Blocked] ' + PROXY + ' ' + str(req.status_code))
                     else:
                         print(Fore.RED + '[Bad] ' + PROXY + ' ' + str(req.status_code))
@@ -221,7 +224,7 @@ def proxychecker():
                 pass
     def proxer():
         try:
-            prxtype = input('HTTP/SOCKS5: ')
+            prxtype = input('HTTP/SOCKS4/SOCKS5: ')
         except:
             print('Invalid')
             main()
@@ -230,7 +233,7 @@ def proxychecker():
         except:
             print('Invalid')
             main()
-        domain = 'https://www.google.com/'
+        domain = 'https://httpbin.org/anything'
         os.system('cls' if os.name == 'nt' else 'clear')
         with open(fileproxy, 'r') as x:
             prox = x.read().splitlines()
