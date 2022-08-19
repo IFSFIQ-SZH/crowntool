@@ -11,8 +11,8 @@ Multi Tool
 
 ## installing and use
 ```python
-pip install -r requirements.txt
-python crowntool.py
+python3 -m pip install -r requirements.txt
+python3 crowntool.py
 
 or better use the pre compiled exe >> releases
 ```
